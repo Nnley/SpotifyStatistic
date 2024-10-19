@@ -1,7 +1,7 @@
 import os
 import urllib.parse
 import requests
-from db.crud import update_user, get_user
+from db.crud import get_user
 
 from config import load_environment_variables
 load_environment_variables()
@@ -25,7 +25,7 @@ def generate_auth_link():
 
     return f"{auth_url}?{urllib.parse.urlencode(params)}"
 
-def get_access_token(user_id, code):
+def get_access_token(code):
     payload = {
         'grant_type': 'authorization_code',
         'code': code,
@@ -42,16 +42,15 @@ def get_access_token(user_id, code):
         refresh_token = token_info.get("refresh_token")
 
         # TODO: Hash refresh_token
-        update_user(user_id, access_token, refresh_token)
-        return 'Вы успешно прошли авторизацию'
+        return access_token, refresh_token
     else:
         print('Access token error: ', response.json())
-        return "Произошла ошибка"
+        raise Exception(response.json())
 
 def refresh_access_token(user_id):
     user = get_user(user_id)
     if not user or user.refresh_token is None:
-        return "Ошибка авторизации. Refresh token не найден"
+        return Exception("Refresh token not found")
     
     # TODO: Hash refresh_token
     refresh_token = user.refresh_token
@@ -68,9 +67,10 @@ def refresh_access_token(user_id):
     if response.status_code == 200:
         token_info = response.json()
         new_access_token = token_info.get("access_token")
-
-        update_user(user_id, new_access_token)
+        
+        
+        return new_access_token
     else:
         print('Refresh token error: ', response.json())
+        raise Exception(response.json())
     
-    return new_access_token
