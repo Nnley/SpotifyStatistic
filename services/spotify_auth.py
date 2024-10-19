@@ -26,7 +26,6 @@ def generate_auth_link():
     return f"{auth_url}?{urllib.parse.urlencode(params)}"
 
 def get_access_token(user_id, code):
-
     payload = {
         'grant_type': 'authorization_code',
         'code': code,
@@ -42,10 +41,11 @@ def get_access_token(user_id, code):
         access_token = token_info.get("access_token")
         refresh_token = token_info.get("refresh_token")
 
+        # TODO: Hash refresh_token
         update_user(user_id, access_token, refresh_token)
         return 'Вы успешно прошли авторизацию'
     else:
-        print(response.json())
+        print('Access token error: ', response.json())
         return "Произошла ошибка"
 
 def refresh_access_token(user_id):
@@ -53,6 +53,7 @@ def refresh_access_token(user_id):
     if not user or user.refresh_token is None:
         return "Ошибка авторизации. Refresh token не найден"
     
+    # TODO: Hash refresh_token
     refresh_token = user.refresh_token
 
     payload = {
@@ -70,6 +71,6 @@ def refresh_access_token(user_id):
 
         update_user(user_id, new_access_token)
     else:
-        print("Refresh token error: ", response.json())
+        print('Refresh token error: ', response.json())
     
-    return response.status_code
+    return new_access_token
