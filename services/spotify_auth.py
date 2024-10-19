@@ -15,6 +15,7 @@ token_url = 'https://accounts.spotify.com/api/token'
 auth_url = 'https://accounts.spotify.com/authorize'
 
 
+# TODO: сделать с помощью классов, перепроектировать под SOLID
 def generate_auth_link(state):
     params = {
         'response_type': 'code',

@@ -2,6 +2,7 @@ from db.crud import update_user, get_user
 from services.spotify_auth import refresh_access_token
 import requests
 
+# TODO: сделать с помощью классов, добавить типизации и enum для time_range
 def get_user_top_tracks(user_id, time_range='short_term'):
     user = get_user(user_id)
     result = []
