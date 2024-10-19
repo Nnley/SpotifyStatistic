@@ -1,13 +1,8 @@
 from db.crud import update_user, get_user
 from services.spotify_auth import refresh_access_token
 import requests
-from enum import Enum
 
-class TimeRange(Enum):
-    SHORT_TERM = 'short_term'
-    MEDIUM_TERM = 'medium_term'
-
-def get_user_top_tracks(user_id, time_range=TimeRange.SHORT_TERM):
+def get_user_top_tracks(user_id, time_range='short_term'):
     user = get_user(user_id)
     result = []
     

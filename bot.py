@@ -1,6 +1,6 @@
+# TODO: разделить всего бота по файлам
 import logging
 import os
-import re
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
@@ -56,6 +56,7 @@ async def auth(message: types.Message):
         await message.answer('Вы уже авторизованы.')
 
 
+# TODO: переписать полностью этот говнокод
 @dp.inline_handler()
 async def inline_handler(query: types.InlineQuery):
     user_id = query.from_user.id
@@ -80,8 +81,8 @@ async def inline_handler(query: types.InlineQuery):
         )
         await query.answer(results, cache_time=1, is_personal=True)
     else:
-        user_top_tracks_month = spotify_service.get_user_top_tracks(user_id, spotify_service.TimeRange.SHORT_TERM)
-        user_top_tracks_half_year = spotify_service.get_user_top_tracks(user_id, spotify_service.TimeRange.MEDIUM_TERM)
+        user_top_tracks_month = spotify_service.get_user_top_tracks(user_id, 'short_term')
+        user_top_tracks_half_year = spotify_service.get_user_top_tracks(user_id, 'medium_term')
         user_profile = spotify_service.get_user_profile(user_id)
         
         top_tracks_month_message_text = ''
@@ -105,7 +106,7 @@ async def inline_handler(query: types.InlineQuery):
         results.append(
             types.InlineQueryResultArticle(
                 id='1',
-                title='Моя статистика',
+                title='Статистика',
                 description='Посмотреть топ моих самых прослушиваемых треков за месяц',
                 input_message_content=types.InputTextMessageContent(
                     message_text=top_tracks_month_message_text,
@@ -115,7 +116,7 @@ async def inline_handler(query: types.InlineQuery):
         results.append(
             types.InlineQueryResultArticle(
                 id='2',
-                title='Моя статистика',
+                title='Статистика',
                 description='Посмотреть топ моих самых прослушиваемых треков за пол года',
                 input_message_content=types.InputTextMessageContent(
                     message_text=top_tracks_half_year_message_text,
