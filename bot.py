@@ -80,27 +80,47 @@ async def inline_handler(query: types.InlineQuery):
         )
         await query.answer(results, cache_time=1, is_personal=True)
     else:
-        user_top = spotify_service.get_user_top_tracks(user_id)
+        user_top_tracks_month = spotify_service.get_user_top_tracks(user_id, spotify_service.TimeRange.SHORT_TERM)
+        user_top_tracks_half_year = spotify_service.get_user_top_tracks(user_id, spotify_service.TimeRange.MEDIUM_TERM)
         user_profile = spotify_service.get_user_profile(user_id)
         
-        message_text = ''
+        top_tracks_month_message_text = ''
+        top_tracks_half_year_message_text = ''
         
-        if user_top is not None and user_profile is not None:
-            message_text = f"Статистика {user_profile.get('display_name')} ({user_profile.get('country')}) в Spotify:\n\n"
-            message_text += '\n'.join([f"{track.get('name')} - {track.get('artist')}" for track in user_top])
+        if user_top_tracks_month is not None and user_profile is not None:
+            top_tracks_month_message_text = f"Статистика {user_profile.get('display_name')} ({user_profile.get('country')}) в Spotify за месяц:\n\n"
+            
+            top_tracks_month_message_text += '\n'.join([f"{i + 1}. {track.get('name')} - {track.get('artist')}" for i, track in enumerate(user_top_tracks_month)])
         else: 
-            message_text += 'Возникла ошибка при получении статистики.'
+            top_tracks_month_message_text += 'Возникла ошибка при получении статистики.'
+        
+        if user_top_tracks_half_year is not None and user_profile is not None:
+            top_tracks_half_year_message_text = f"Статистика {user_profile.get('display_name')} ({user_profile.get('country')}) в Spotify за пол года:\n\n"
+            
+            top_tracks_half_year_message_text += '\n'.join([f"{i + 1}. {track.get('name')} - {track.get('artist')}" for i, track in enumerate(user_top_tracks_half_year)])
+        else: 
+            top_tracks_half_year_message_text += 'Возникла ошибка при получении статистики.'
             
         results = []
         results.append(
             types.InlineQueryResultArticle(
                 id='1',
                 title='Моя статистика',
-                description='Посмотреть топ моих самых прослушиваемых треков',
+                description='Посмотреть топ моих самых прослушиваемых треков за месяц',
                 input_message_content=types.InputTextMessageContent(
-                    message_text=message_text,
+                    message_text=top_tracks_month_message_text,
                 ),
-            )
+            ),
+        )
+        results.append(
+            types.InlineQueryResultArticle(
+                id='2',
+                title='Моя статистика',
+                description='Посмотреть топ моих самых прослушиваемых треков за пол года',
+                input_message_content=types.InputTextMessageContent(
+                    message_text=top_tracks_half_year_message_text,
+                ),
+            ),
         )
         await query.answer(results, cache_time=1, is_personal=True)
 
