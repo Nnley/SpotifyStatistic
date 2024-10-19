@@ -1,13 +1,17 @@
-from .database import Session
-from .models import User
+from db.database import Session
+from db.models import User
 
 session = Session()
 
-def create_user(user_id):
-    new_user = User(id=user_id)
-    session.add(new_user)
-    session.commit()
-    return new_user
+def get_or_create_user(user_id):
+    user = session.query(User).filter_by(id=user_id).first()
+    
+    if user is None:
+        user = User(id=user_id)
+        session.add(user)
+        session.commit()
+    
+    return user
 
 def get_user(user_id):
     return session.query(User).filter_by(id=user_id).first()
