@@ -5,8 +5,13 @@ import uuid
 from db.crud import get_user, update_user
 from services.spotify_auth import generate_auth_link, get_access_token
 
+from config import load_environment_variables
+load_environment_variables()
+
+
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = os.getenv('FLASK_SERCET')
+
 
 @app.route('/callback')
 def handle_redirect():
@@ -31,7 +36,7 @@ def handle_redirect():
     except Exception as e:
         return f'Failed to get access token: {e}', 500
 
-    return redirect(f'https://t.me/SpotifyStatisticBot')
+    return redirect('https://t.me/SpotifyStatisticBot?start=success')
 
 @app.route('/auth/<user_id>')
 def handle_auth(user_id):
@@ -39,8 +44,8 @@ def handle_auth(user_id):
 
     state = str(uuid.uuid4())
     session['state'] = state
-
-    return redirect(generate_auth_link())
+    
+    return redirect(generate_auth_link(state))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)

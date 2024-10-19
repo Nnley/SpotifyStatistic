@@ -15,12 +15,13 @@ token_url = 'https://accounts.spotify.com/api/token'
 auth_url = 'https://accounts.spotify.com/authorize'
 
 
-def generate_auth_link():
+def generate_auth_link(state):
     params = {
         'response_type': 'code',
         'client_id': client_id,
         'redirect_uri': redirect_uri,
-        'scope': scope
+        'scope': scope,
+        'state': state
     }
 
     return f"{auth_url}?{urllib.parse.urlencode(params)}"

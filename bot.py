@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 
 from db.crud import get_or_create_user
-from services import spotify_service, spotify_auth
+from services import spotify_service
 
 from config import load_environment_variables
 load_environment_variables()
@@ -45,7 +45,7 @@ async def auth(message: types.Message):
     user_id = message.from_user.id
     user = get_or_create_user(user_id)
     if user.refresh_token is None:
-        auth_link = f'{os.getenv("SPOTIFY_AUTH_URL")}?user_id={user_id}'
+        auth_link = f'{os.getenv("SPOTIFY_AUTH_URL")}/{user_id}'
         
         keyboard = types.InlineKeyboardMarkup()
         button = types.InlineKeyboardButton(text='Авторизоваться', url=auth_link) # type: ignore
@@ -81,11 +81,15 @@ async def inline_handler(query: types.InlineQuery):
         await query.answer(results, cache_time=1, is_personal=True)
     else:
         user_top = spotify_service.get_user_top_tracks(user_id)
+        user_profile = spotify_service.get_user_profile(user_id)
         
-        if user_top is not None:
-            message_text = '\n'.join([f"{track['name']} - {track['artist']}" for track in user_top])
+        message_text = ''
+        
+        if user_top is not None and user_profile is not None:
+            message_text = f"Статистика {user_profile.get('display_name')} ({user_profile.get('country')}) в Spotify:\n\n"
+            message_text += '\n'.join([f"{track.get('name')} - {track.get('artist')}" for track in user_top])
         else: 
-            message_text = 'Возникла ошибка при получении статистики.'
+            message_text += 'Возникла ошибка при получении статистики.'
             
         results = []
         results.append(
