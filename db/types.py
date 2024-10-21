@@ -17,6 +17,8 @@ class IUser:
         top_tracks_month: Optional[List[TopTracksType]] = None,
         top_tracks_half_year: Optional[List[TopTracksType]] = None,
         top_tracks_year: Optional[List[TopTracksType]] = None,
+        display_name: Optional[str] = None,
+        country: Optional[str] = None,
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
     ):
@@ -26,6 +28,8 @@ class IUser:
         self.top_tracks_month = top_tracks_month
         self.top_tracks_half_year = top_tracks_half_year
         self.top_tracks_year = top_tracks_year
+        self.display_name = display_name
+        self.country = country
         self.created_at = created_at
         self.updated_at = updated_at
 
