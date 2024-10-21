@@ -1,5 +1,6 @@
 from typing import Optional, List
 from typing_extensions import TypedDict
+from datetime import datetime
 
 
 class TopTracksType(TypedDict):
@@ -19,8 +20,8 @@ class IUser:
         top_tracks_year: Optional[List[TopTracksType]] = None,
         display_name: Optional[str] = None,
         country: Optional[str] = None,
-        created_at: Optional[str] = None,
-        updated_at: Optional[str] = None,
+        created_at: Optional[datetime] = None,
+        updated_at: Optional[datetime] = None,
     ):
         self.id = id
         self.access_token = access_token
@@ -54,7 +55,7 @@ class Image(TypedDict):
     width: int
 
 
-class IUserProfile(TypedDict):
+class IUserProfile(TypedDict, total=False):
     country: str
     display_name: str
     email: str
