@@ -50,7 +50,7 @@ class SpotifyAuth:
         else:
             raise Exception('Get tokens error: ' + response.json() + '\nRespose status code:' + response.status_code)
 
-    def refresh_access_token(self, refresh_token: str) -> str:
+    def refresh_access_token(self, refresh_token: str) -> tuple[str, str]:
         payload = {
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,
@@ -62,9 +62,10 @@ class SpotifyAuth:
 
         if response.status_code == 200:
             token_info = response.json()
+            new_refresh_token = token_info.get("refresh_token")
             new_access_token = token_info.get("access_token")
             
-            return new_access_token
+            return new_refresh_token, new_access_token
         else:
             raise Exception('Refresh token error: ' + response.json() + '\nRespose status code:' + response.status_code)
     
