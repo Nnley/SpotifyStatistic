@@ -63,14 +63,14 @@ class UserTokenManager:
         return None
     
     @staticmethod
-    def set_access_token(user_id: int, access_token: str) -> Optional[IUser ]:
+    def set_access_token(user_id: int, access_token: str) -> IUser:
         user = UserRepository.get_user_or_raise(user_id)
         user.access_token = access_token
         UserRepository.update_user(user)
         return user
     
     @staticmethod
-    def set_refresh_token(user_id: int, refresh_token: str) -> Optional[IUser ]:
+    def set_refresh_token(user_id: int, refresh_token: str) -> IUser:
         user = UserRepository.get_user_or_raise(user_id)
         user.refresh_token = refresh_token
         UserRepository.update_user(user)
