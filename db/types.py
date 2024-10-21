@@ -28,3 +28,38 @@ class IUser:
         self.top_tracks_year = top_tracks_year
         self.created_at = created_at
         self.updated_at = updated_at
+
+
+class ExplicitContent(TypedDict):
+    filter_enabled: bool
+    filter_locked: bool
+
+
+class ExternalUrls(TypedDict):
+    spotify: str
+
+
+class Followers(TypedDict):
+    href: str
+    total: int
+
+
+class Image(TypedDict):
+    url: str
+    height: int
+    width: int
+
+
+class IUserProfile(TypedDict):
+    country: str
+    display_name: str
+    email: str
+    explicit_content: ExplicitContent
+    external_urls: ExternalUrls
+    followers: Followers
+    href: str
+    id: str
+    images: List[Image]
+    product: str
+    type: str
+    uri: str
