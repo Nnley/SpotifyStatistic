@@ -6,6 +6,10 @@ from config import load_environment_variables
 load_environment_variables()
 
 
+class NotAuthorizedError(Exception):
+    pass
+
+
 class SpotifyAuth:
     def __init__(self):
         self.client_id =os.getenv("SPOTIFY_CLIENT_ID")
