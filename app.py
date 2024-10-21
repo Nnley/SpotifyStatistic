@@ -2,8 +2,8 @@ from flask import Flask, request, redirect, session
 import os
 import uuid
 
-from db.crud import get_user, update_user
-from services.spotify_auth import generate_auth_link, get_access_token
+from db.crud import UserRepository
+from services.spotify_auth import SpotifyAuth
 
 from config import load_environment_variables
 load_environment_variables()
@@ -26,13 +26,14 @@ def handle_redirect():
     if user_id is None:
         return 'No user_id in session', 400
     
-    user = get_user(user_id)
+    user = UserRepository.get_user_by_id(user_id)
     if user is None:
         return 'User not found', 404
     
     try:
-        access_token, refresh_token = get_access_token(code)
-        update_user(user_id, access_token, refresh_token)
+        spotify_auth = SpotifyAuth()
+        user.access_token, user.refresh_token = spotify_auth.get_access_refresh_tokens(code)
+        UserRepository.update_user(user)
     except Exception as e:
         return f'Failed to get access token: {e}', 500
 
@@ -40,12 +41,13 @@ def handle_redirect():
 
 @app.route('/auth/<user_id>')
 def handle_auth(user_id):
+    spotify_auth = SpotifyAuth()
     session['user_id'] = user_id
 
     state = str(uuid.uuid4())
     session['state'] = state
     
-    return redirect(generate_auth_link(state))
+    return redirect(spotify_auth.generate_auth_link(state))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)

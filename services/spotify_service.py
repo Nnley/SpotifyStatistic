@@ -9,9 +9,9 @@ from typing import Optional, List, cast
 
 
 class TimeRange(enum.Enum):
-    short_term = 'short_term'
-    medium_term = 'medium_term'
-    long_term = 'long_term'
+    SHORT_TERM = 'short_term'
+    MEDIUM_TERM = 'medium_term'
+    LONG_TERM = 'long_term'
 
 
 class SpotifyAPI:
@@ -19,7 +19,7 @@ class SpotifyAPI:
         self.base_url = 'https://api.spotify.com/v1'
     
     def fetch_top_tracks(self, access_token: str, time_range: TimeRange) -> tuple[int, dict]:
-        url = f'{self.base_url}/me/top/tracks?limit=10&time_range={time_range}'
+        url = f'{self.base_url}/me/top/tracks?limit=10&time_range={time_range.value}'
         response = requests.get(url, headers={'Authorization': f'Bearer {access_token}'})
         return response.status_code, response.json()
 

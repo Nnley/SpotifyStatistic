@@ -1,12 +1,12 @@
-# TODO: разделить всего бота по файлам
+# TODO: organize bot into folders and files
 import logging
 import os
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 
-from db.crud import get_or_create_user
-from services import spotify_service
+from db.crud import UserManager
+from services.spotify_service import SpotifyService, TimeRange
 
 from config import load_environment_variables
 load_environment_variables()
@@ -28,7 +28,7 @@ async def start(message: types.Message):
         return await message.answer('Вы успешно прошли авторизацию')
     
     user_id = message.from_user.id
-    user = get_or_create_user(user_id)
+    user = UserManager.get_or_create_user(user_id)
     if user.refresh_token is None:
         await message.answer('Привет! Чтобы получить статистику, Вам необходимо авторизоваться через Spotify. Для этого введите команду /auth.')
     else: 
@@ -43,7 +43,7 @@ async def help(message: types.Message):
 @dp.message_handler(commands=['auth'])
 async def auth(message: types.Message):
     user_id = message.from_user.id
-    user = get_or_create_user(user_id)
+    user = UserManager.get_or_create_user(user_id)
     if user.refresh_token is None:
         auth_link = f'{os.getenv("SPOTIFY_AUTH_URL")}/{user_id}'
         
@@ -56,11 +56,11 @@ async def auth(message: types.Message):
         await message.answer('Вы уже авторизованы.')
 
 
-# TODO: переписать полностью этот говнокод
+# TODO: rewrite and refactor all that shitty code
 @dp.inline_handler()
 async def inline_handler(query: types.InlineQuery):
     user_id = query.from_user.id
-    user = get_or_create_user(user_id)
+    user = UserManager.get_or_create_user(user_id)
     if user.refresh_token is None:
         results = []
         results.append(
@@ -81,8 +81,10 @@ async def inline_handler(query: types.InlineQuery):
         )
         await query.answer(results, cache_time=1, is_personal=True)
     else:
-        user_top_tracks_month = spotify_service.get_user_top_tracks(user_id, 'short_term')
-        user_top_tracks_half_year = spotify_service.get_user_top_tracks(user_id, 'medium_term')
+        spotify_service = SpotifyService()
+        
+        user_top_tracks_month = spotify_service.get_user_top_tracks(user_id, TimeRange.SHORT_TERM)
+        user_top_tracks_half_year = spotify_service.get_user_top_tracks(user_id, TimeRange.MEDIUM_TERM)
         user_profile = spotify_service.get_user_profile(user_id)
         
         top_tracks_month_message_text = ''
