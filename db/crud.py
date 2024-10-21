@@ -39,11 +39,10 @@ class UserRepository:
 class UserManager:
     @staticmethod
     def get_or_create_user(user_id: int) -> IUser:
-        user_repository = UserRepository()
-        user = user_repository.get_user_by_id(user_id) 
+        user = UserRepository.get_user_by_id(user_id) 
         if user is None:
             user = User(id=user_id)
-            user_repository.add_user(user)
+            UserRepository.add_user(user)
         return user
 
 
