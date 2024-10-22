@@ -62,7 +62,7 @@ class SpotifyService():
         status_code, data = self.spotify_api.fetch_top_tracks(cast(str, user.access_token), time_range)
 
         if status_code == 401:
-            user = self.refresh_user_tokens(user)
+            user = self.refresh_user_access_token(user)
             status_code, data = self.spotify_api.fetch_top_tracks(cast(str, user.access_token), time_range)
 
         if status_code != 200:
@@ -99,7 +99,7 @@ class SpotifyService():
         status_code, data = self.spotify_api.fetch_user_profile(user.access_token)
         
         if status_code == 401:
-            user = self.refresh_user_tokens(user)
+            user = self.refresh_user_access_token(user)
             status_code, data = self.spotify_api.fetch_user_profile(cast(str, user.access_token))
         
         if status_code != 200:
@@ -112,12 +112,11 @@ class SpotifyService():
         
         return data
     
-    def refresh_user_tokens(self, user: IUser) -> IUser:
+    def refresh_user_access_token(self, user: IUser) -> IUser:
         try:    
             spotify_auth = SpotifyAuth()
-            user.refresh_token, user.access_token = spotify_auth.refresh_access_token(cast(str, user.refresh_token))
+            user.access_token = spotify_auth.refresh_access_token(cast(str, user.refresh_token))
             UserTokenManager.set_access_token(user.id, user.access_token)
-            UserTokenManager.set_refresh_token(user.id, user.refresh_token)
             return user
         except Exception as e:
             raise Exception(f"Failed to refresh access token: {e}")
