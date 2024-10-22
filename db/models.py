@@ -4,6 +4,8 @@ from sqlalchemy.sql import func
 
 Base = declarative_base()
 
+
+# TODO: Rewrite the database, split the user table into other tables
 class User(Base):
     __tablename__ = 'users'
     
@@ -15,6 +17,10 @@ class User(Base):
     top_tracks_month = Column(JSON, nullable=True)
     top_tracks_half_year = Column(JSON, nullable=True)
     top_tracks_year = Column(JSON, nullable=True)
+    
+    top_artists_month = Column(JSON, nullable=True)
+    top_artists_half_year = Column(JSON, nullable=True)
+    top_artists_year = Column(JSON, nullable=True)
     
     display_name = Column(String, nullable=True)
     country = Column(String, nullable=True)
