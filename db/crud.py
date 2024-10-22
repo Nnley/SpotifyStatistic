@@ -63,10 +63,10 @@ class UserRepository:
 
 class UserManager:
     @staticmethod
-    def get_or_create_user(user_id: int) -> IUser:
+    def get_or_create_user(user_id: int, laguage_code: str = "en") -> IUser:
         user = UserRepository.get_user_by_id(user_id) 
         if user is None:
-            user = User(id=user_id)
+            user = User(id=user_id, laguage_code=laguage_code)
             UserRepository.add_user(user)
             return UserRepository.get_user_or_raise(user_id)
         return user
