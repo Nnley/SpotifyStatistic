@@ -1,19 +1,36 @@
+import os
+import base64
+
 from db.database import Session
 from db.models import User
 from db.types import IUser, TopTracksType
 
+from services.token_manager import TokenManager
+
 from typing import Optional, List
+
+from config import load_environment_variables
+load_environment_variables()
 
 
 class UserNotFoundError(Exception):
     pass
 
 
-class UserRepository:
+class UserRepository:   
     @staticmethod
-    def get_user_by_id(user_id: int) -> Optional[IUser ]:
+    def get_user_by_id(user_id: int) -> Optional[IUser]:
+        fernet_key = os.getenv('FERNET_KEY')
+        
+        if fernet_key is None:
+            raise ValueError("FERNET_KEY is not set.")
+        
         with Session() as session:
             user = session.query(User).filter_by(id=user_id).first()
+            
+            if user and user.refresh_token: # type: ignore
+                user.refresh_token = TokenManager.decrypt_token(user.refresh_token, fernet_key.encode()) # type: ignore
+            
             return user 
 
     @staticmethod
@@ -31,6 +48,14 @@ class UserRepository:
 
     @staticmethod
     def update_user(user: IUser) -> None:
+        fernet_key = os.getenv('FERNET_KEY')
+        
+        if fernet_key is None:
+            raise ValueError("FERNET_KEY is not set.")
+        
+        if user.refresh_token:
+            user.refresh_token = TokenManager.encrypt_token(user.refresh_token, fernet_key.encode())
+            
         with Session() as session:
             session.merge(user)
             session.commit()
