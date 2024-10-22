@@ -68,6 +68,7 @@ class UserManager:
         if user is None:
             user = User(id=user_id)
             UserRepository.add_user(user)
+            return UserRepository.get_user_or_raise(user_id)
         return user
 
 
