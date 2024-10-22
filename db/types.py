@@ -20,7 +20,7 @@ class IUser:
         top_tracks_year: Optional[List[TopTracksType]] = None,
         display_name: Optional[str] = None,
         country: Optional[str] = None,
-        laguange_code: str = 'en',
+        language_code: str = 'en',
         created_at: Optional[datetime] = None,
         updated_at: Optional[datetime] = None,
     ):
@@ -32,7 +32,7 @@ class IUser:
         self.top_tracks_year = top_tracks_year
         self.display_name = display_name
         self.country = country
-        self.laguange_code = laguange_code
+        self.language_code = language_code
         self.created_at = created_at
         self.updated_at = updated_at
 

@@ -18,7 +18,7 @@ class User(Base):
     
     display_name = Column(String, nullable=True)
     country = Column(String, nullable=True)
-    laguange_code = Column(String, default='en')
+    language_code = Column(String, default='en')
     
     created_at = Column(DateTime, default=func.now())   
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now()) 
