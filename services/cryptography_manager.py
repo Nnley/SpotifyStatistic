@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 
-class TokenManager:
+class CryptographyManager:
     @staticmethod
     def encrypt_token(token: str, key: bytes) -> str:
         cipher = Fernet(key)

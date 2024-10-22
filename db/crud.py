@@ -5,7 +5,7 @@ from db.database import Session
 from db.models import User
 from db.types import IUser, TopTracksType
 
-from services.token_manager import TokenManager
+from services.cryptography_manager import CryptographyManager
 
 from typing import Optional, List
 
@@ -29,7 +29,7 @@ class UserRepository:
             user = session.query(User).filter_by(id=user_id).first()
             
             if user and user.refresh_token: # type: ignore
-                user.refresh_token = TokenManager.decrypt_token(user.refresh_token, fernet_key.encode()) # type: ignore
+                user.refresh_token = CryptographyManager.decrypt_token(user.refresh_token, fernet_key.encode()) # type: ignore
             
             return user 
 
@@ -54,7 +54,7 @@ class UserRepository:
             raise ValueError("FERNET_KEY is not set.")
         
         if user.refresh_token:
-            user.refresh_token = TokenManager.encrypt_token(user.refresh_token, fernet_key.encode())
+            user.refresh_token = CryptographyManager.encrypt_token(user.refresh_token, fernet_key.encode())
             
         with Session() as session:
             session.merge(user)
