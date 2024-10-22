@@ -3,7 +3,7 @@ import base64
 
 from db.database import Session
 from db.models import User
-from db.types import IUser, TopTracksType
+from db.types import IUser, TopTracksType, TopArtistsType
 
 from services.cryptography_manager import CryptographyManager
 
@@ -126,6 +126,30 @@ class UserTrackManager:
             return user.top_tracks_year
         else:
             return None
+    
+    @staticmethod
+    def get_top_artists_month(user_id: int) -> Optional[List[TopArtistsType]]:
+        user = UserRepository.get_user_or_raise(user_id)
+        if user.top_artists_month:
+            return user.top_artists_month
+        else:
+            return None
+    
+    @staticmethod
+    def get_top_artists_half_year(user_id: int) -> Optional[List[TopArtistsType]]:
+        user = UserRepository.get_user_or_raise(user_id)
+        if user.top_artists_half_year:
+            return user.top_artists_half_year
+        else:
+            return None
+
+    @staticmethod    
+    def get_top_artists_year(user_id: int) -> Optional[List[TopArtistsType]]:
+        user = UserRepository.get_user_or_raise(user_id)
+        if user.top_artists_year:
+            return user.top_artists_year
+        else:
+            return None
 
     @staticmethod    
     def set_top_tracks_month(user_id: int, top_tracks_month: List[TopTracksType]) -> IUser:
@@ -145,5 +169,26 @@ class UserTrackManager:
     def set_top_tracks_year(user_id: int, top_tracks_year: List[TopTracksType]) -> IUser:
         user = UserRepository.get_user_or_raise(user_id)
         user.top_tracks_year = top_tracks_year
+        UserRepository.update_user(user)
+        return user
+    
+    @staticmethod    
+    def set_top_artists_month(user_id: int, top_artists_month: List[TopArtistsType]) -> IUser:
+        user = UserRepository.get_user_or_raise(user_id)
+        user.top_artists_month = top_artists_month
+        UserRepository.update_user(user)
+        return user
+
+    @staticmethod   
+    def set_top_artists_half_year(user_id: int, top_artists_half_year: List[TopArtistsType]) -> IUser: 
+        user = UserRepository.get_user_or_raise(user_id)
+        user.top_artists_half_year = top_artists_half_year
+        UserRepository.update_user(user)
+        return user
+
+    @staticmethod
+    def set_top_artists_year(user_id: int, top_artists_year: List[TopArtistsType]) -> IUser:
+        user = UserRepository.get_user_or_raise(user_id)
+        user.top_artists_year = top_artists_year
         UserRepository.update_user(user)
         return user
