@@ -1,4 +1,8 @@
 import os
+import logging
+
+from aiogram.contrib.middlewares.logging import LoggingMiddleware
+from middlewares.throttling import ThrottlingMiddleware
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -13,3 +17,8 @@ if not BOT_API_TOKEN:
 bot = Bot(token=BOT_API_TOKEN, parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
+
+logging.basicConfig(level=logging.INFO)
+
+dp.middleware.setup(LoggingMiddleware())
+dp.middleware.setup(ThrottlingMiddleware())
