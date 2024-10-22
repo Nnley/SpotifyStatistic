@@ -2,7 +2,7 @@ import requests
 import enum
 
 from db.crud import UserManager, UserRepository, UserTokenManager, UserTrackManager
-from db.types import TopTracksType, IUser, IUserProfile
+from db.types import TopTracksType, IUser, IUserProfile, TopArtistsType
 
 from services.spotify_auth import SpotifyAuth, NotAuthorizedError
 from typing import Optional, List, cast
@@ -21,6 +21,11 @@ class SpotifyAPI:
     
     def fetch_top_tracks(self, access_token: str, time_range: TimeRange) -> tuple[int, dict]:
         url = f'{self.base_url}/me/top/tracks?limit=10&time_range={time_range.value}'
+        response = requests.get(url, headers={'Authorization': f'Bearer {access_token}'})
+        return response.status_code, response.json()
+    
+    def fetch_top_artists(self, access_token: str, time_range: TimeRange) -> tuple[int, dict]:
+        url = f'{self.base_url}/me/top/artists?limit=10&time_range={time_range.value}'
         response = requests.get(url, headers={'Authorization': f'Bearer {access_token}'})
         return response.status_code, response.json()
 
@@ -84,6 +89,56 @@ class SpotifyService():
 
         return top_tracks
 
+    def get_user_top_artists(self, user_id: int, time_range: TimeRange) -> Optional[List[TopArtistsType]]:
+        user = UserManager.get_or_create_user(user_id)
+
+        if user.access_token is None or user.refresh_token is None:
+            raise NotAuthorizedError(f"User {user.id} is not authorized")
+        
+        if time_range == TimeRange.SHORT_TERM:
+            cached_artists = UserTrackManager.get_top_artists_month(user.id)
+        elif time_range == TimeRange.MEDIUM_TERM:
+            cached_artists = UserTrackManager.get_top_artists_half_year(user.id)
+        elif time_range == TimeRange.LONG_TERM:
+            cached_artists = UserTrackManager.get_top_artists_year(user.id)
+        
+        if cached_artists:
+            updated_at = datetime.strptime(cached_artists[0]['updated_at'], '%Y-%m-%d')
+            current_date = datetime.now()
+
+            if updated_at.date() != current_date.date():
+                return self._update_top_artists(user, time_range)
+
+            return cached_artists
+
+        return self._update_top_artists(user, time_range)
+
+    def _update_top_artists(self, user: IUser, time_range: TimeRange) -> List[TopArtistsType]:
+        status_code, data = self.spotify_api.fetch_top_artists(cast(str, user.access_token), time_range)
+
+        if status_code == 401:
+            user = self.refresh_user_access_token(user)
+            status_code, data = self.spotify_api.fetch_top_artists(cast(str, user.access_token), time_range)
+
+        if status_code != 200:
+            raise Exception(f'Request top tracks error with status code: {status_code}')
+
+        top_artists = self._parse_top_artists(data)
+        
+        #TODO: change the updated_at from this object to a new one(db)
+        current_time = datetime.now().date().isoformat()
+        for artist in top_artists:
+            artist['updated_at'] = current_time
+            
+        if time_range == TimeRange.SHORT_TERM:
+            UserTrackManager.set_top_artists_month(user.id, top_artists)
+        elif time_range == TimeRange.MEDIUM_TERM:
+            UserTrackManager.set_top_artists_half_year(user.id, top_artists)
+        elif time_range == TimeRange.LONG_TERM:
+            UserTrackManager.set_top_artists_year(user.id, top_artists)
+
+        return top_artists
+
     def get_user_profile(self, user_id: int) -> IUserProfile:
         user = UserManager.get_or_create_user(user_id)
 
@@ -125,4 +180,10 @@ class SpotifyService():
         result = []
         for track in data.get('items', []):
             result.append({'name': track.get('name'), 'artist': track.get('artists')[0].get('name')})
+        return result
+    
+    def _parse_top_artists(self, data) -> List[TopArtistsType]:
+        result = []
+        for track in data.get('items', []):
+            result.append({'name': track.get('name')})
         return result
