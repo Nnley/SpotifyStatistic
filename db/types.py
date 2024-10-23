@@ -31,6 +31,7 @@ class IUser:
         language_code: str = 'en',
         created_at: Optional[datetime] = None,
         updated_at: Optional[datetime] = None,
+        authorization_code: Optional[str] = None
     ):
         self.id = id
         self.access_token = access_token
@@ -46,6 +47,7 @@ class IUser:
         self.language_code = language_code
         self.created_at = created_at
         self.updated_at = updated_at
+        self.authorization_code = authorization_code
 
 
 class ExplicitContent(TypedDict):

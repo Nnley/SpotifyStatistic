@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, JSON, DateTime
+from sqlalchemy import Column, Integer, String, JSON, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 
@@ -28,3 +29,17 @@ class User(Base):
     
     created_at = Column(DateTime, default=func.now())   
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now()) 
+    
+    authorization_code = relationship("AuthorizationCode", back_populates="user")
+
+
+class AuthorizationCode(Base):
+    __tablename__ = 'authorization_codes'
+    
+    id = Column(Integer, primary_key=True)
+    code = Column(String, unique=True, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    created_at = Column(DateTime, default=func.now())
+    expires_at = Column(DateTime, nullable=False)
+
+    user = relationship("User ", back_populates="authorization_codes")

@@ -1,8 +1,9 @@
 import os
-import base64
+
+from datetime import datetime, timedelta
 
 from db.database import Session
-from db.models import User
+from db.models import User, AuthorizationCode
 from db.types import IUser, TopTracksType, TopArtistsType
 
 from services.cryptography_manager import CryptographyManager
@@ -191,4 +192,26 @@ class UserTrackManager:
         user = UserRepository.get_user_or_raise(user_id)
         user.top_artists_year = top_artists_year
         UserRepository.update_user(user)
+        return user
+
+
+class AuthorizationCodeManager:
+    @staticmethod
+    def get_authorization_code(user_id: int) -> Optional[str]:
+        user = UserRepository.get_user_or_raise(user_id)
+        if user.authorization_code:
+            return user.authorization_code
+        else:
+            return None
+
+    @staticmethod
+    def set_authorization_code(user_id: int, code: str) -> IUser:
+        user = UserRepository.get_user_or_raise(user_id)
+        
+        expires_at = datetime.utcnow() + timedelta(minutes=15)
+        authorization_code = AuthorizationCode(code=code, user_id=user_id, expires_at=expires_at)
+        
+        user.authorization_code = authorization_code
+        UserRepository.update_user(user)
+        
         return user
