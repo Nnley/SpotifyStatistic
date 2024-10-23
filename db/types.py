@@ -13,6 +13,13 @@ class TopArtistsType(TypedDict):
     artist: str
     updated_at: str
     
+    
+class AuthorizationCodeType:
+    def __init__(self, code: str, user_id: int, expires_at: datetime):
+        self.code = code
+        self.user_id = user_id
+        self.expires_at = expires_at
+
 
 class IUser:
     def __init__(
@@ -31,7 +38,7 @@ class IUser:
         language_code: str = 'en',
         created_at: Optional[datetime] = None,
         updated_at: Optional[datetime] = None,
-        authorization_code: Optional[str] = None
+        authorization_code: Optional[AuthorizationCodeType] = None
     ):
         self.id = id
         self.access_token = access_token

@@ -30,11 +30,11 @@ class User(Base):
     created_at = Column(DateTime, default=func.now())   
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now()) 
     
-    authorization_code = relationship("AuthorizationCode", back_populates="user")
+    authorization_code = relationship("AuthorizationCode", back_populates="user", uselist=False)
 
 
 class AuthorizationCode(Base):
-    __tablename__ = 'authorization_codes'
+    __tablename__ = 'authorization_code'
     
     id = Column(Integer, primary_key=True)
     code = Column(String, unique=True, nullable=False)
@@ -42,4 +42,4 @@ class AuthorizationCode(Base):
     created_at = Column(DateTime, default=func.now())
     expires_at = Column(DateTime, nullable=False)
 
-    user = relationship("User ", back_populates="authorization_codes")
+    user = relationship("User", back_populates="authorization_code")

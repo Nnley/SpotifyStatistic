@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 
 from db.database import Session
 from db.models import User, AuthorizationCode
-from db.types import IUser, TopTracksType, TopArtistsType
+from db.types import IUser, TopTracksType, TopArtistsType, AuthorizationCodeType
+from sqlalchemy.orm import joinedload
 
 from services.cryptography_manager import CryptographyManager
 
@@ -40,6 +41,14 @@ class UserRepository:
         if user is None:
             raise UserNotFoundError(f"User with ID {user_id} not found.")
         return user
+    
+    @staticmethod
+    def get_user_or_raise_with_code(user_id: int) -> IUser:
+        with Session() as session:
+            user = session.query(User).options(joinedload(User.authorization_code)).filter_by(id=user_id).first()
+            if user is None:
+                raise UserNotFoundError(f"User  with ID {user_id} not found.")
+            return user
 
     @staticmethod
     def add_user(user: IUser) -> None:
@@ -197,21 +206,34 @@ class UserTrackManager:
 
 class AuthorizationCodeManager:
     @staticmethod
-    def get_authorization_code(user_id: int) -> Optional[str]:
-        user = UserRepository.get_user_or_raise(user_id)
+    def get_user_by_code(code: int) -> IUser:
+        with Session() as session:
+            user = session.query(User).options(joinedload(User.authorization_code)).join(AuthorizationCode).filter(AuthorizationCode.code == code).first()
+            if user is None:
+                raise UserNotFoundError(f"User  with authorization code {code} not found.")
+            return user
+    
+    @staticmethod
+    def get_authorization_code(user_id: int) -> Optional[AuthorizationCodeType]:
+        user = UserRepository.get_user_or_raise_with_code(user_id)
         if user.authorization_code:
             return user.authorization_code
         else:
             return None
 
     @staticmethod
-    def set_authorization_code(user_id: int, code: str) -> IUser:
-        user = UserRepository.get_user_or_raise(user_id)
+    def set_authorization_code(user_id: int, code: str) -> IUser:            
+        user = UserRepository.get_user_or_raise_with_code(user_id)
         
         expires_at = datetime.utcnow() + timedelta(minutes=15)
-        authorization_code = AuthorizationCode(code=code, user_id=user_id, expires_at=expires_at)
         
-        user.authorization_code = authorization_code
+        if user.authorization_code:
+            user.authorization_code.code = code
+            user.authorization_code.expires_at = expires_at
+        else:
+            authorization_code = AuthorizationCode(code=code, user_id=user_id, expires_at=expires_at)
+            user.authorization_code = authorization_code
+        
         UserRepository.update_user(user)
         
         return user
