@@ -22,7 +22,7 @@ async def auth(message: types.Message):
     if user.refresh_token is None:
         auth_link = f'{os.getenv("SPOTIFY_AUTH_URL")}/{code}'
         
-        await message.answer(get_text(user.language_code, 'auth_button_description'), reply_markup=auth_reply_keyboard(auth_link))
+        await message.answer(get_text(user.language_code, 'auth_button_description'), reply_markup=auth_reply_keyboard(auth_link, user.language_code))
     else:
         await message.answer(get_text(user.language_code, 'already_authorized'))
 

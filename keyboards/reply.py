@@ -13,10 +13,10 @@ def change_language_reply_keyboard():
     
     return keyboard
 
-def auth_reply_keyboard(auth_link: str):
+def auth_reply_keyboard(auth_link: str, language_code: str):
     keyboard = InlineKeyboardMarkup()
     
-    auth_button = InlineKeyboardButton(text="Авторизоваться", url=auth_link) # type: ignore
+    auth_button = InlineKeyboardButton(text=get_text(language_code, 'auth_button_text'), url=auth_link) # type: ignore
     
     keyboard.add(auth_button)
     
