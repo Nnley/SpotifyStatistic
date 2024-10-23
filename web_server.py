@@ -48,6 +48,8 @@ def handle_auth(code):
     except UserNotFoundError as e:
         return str(e), 404
 
+    spotify_auth = SpotifyAuth()
+
     if user.authorization_code and user.authorization_code.expires_at < datetime.utcnow():
         return 'Authorization code expired', 400
 
@@ -56,7 +58,7 @@ def handle_auth(code):
     state = str(uuid.uuid4())
     session['state'] = state
     
-    return redirect('')
+    return redirect(spotify_auth.generate_auth_link(state))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
