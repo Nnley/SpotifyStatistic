@@ -1,8 +1,10 @@
 from flask import Flask, request, redirect, session
+
 import os
 import uuid
+from datetime import datetime
 
-from db.crud import UserRepository
+from db.crud import UserRepository, AuthorizationCodeManager, UserNotFoundError
 from services.spotify_auth import SpotifyAuth
 
 from config import load_environment_variables
@@ -39,15 +41,22 @@ def handle_redirect():
 
     return redirect('https://t.me/SpotifyStatisticBot?start=success')
 
-@app.route('/auth/<user_id>')
-def handle_auth(user_id):
-    spotify_auth = SpotifyAuth()
-    session['user_id'] = user_id
+@app.route('/auth/<code>')
+def handle_auth(code):
+    try:
+        user = AuthorizationCodeManager.get_user_by_code(code)
+    except UserNotFoundError as e:
+        return str(e), 404
+
+    if user.authorization_code and user.authorization_code.expires_at < datetime.utcnow():
+        return 'Authorization code expired', 400
+
+    session['user_id'] = user.id
 
     state = str(uuid.uuid4())
     session['state'] = state
     
-    return redirect(spotify_auth.generate_auth_link(state))
+    return redirect('')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
