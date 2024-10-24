@@ -65,15 +65,15 @@ async def inline_handler(query: types.InlineQuery):
     else:
         spotify_service = SpotifyService()
         
-        user_top_tracks_month = spotify_service.get_user_top_tracks(user_id, TimeRange.SHORT_TERM)
-        user_top_tracks_half_year = spotify_service.get_user_top_tracks(user_id, TimeRange.MEDIUM_TERM)
-        user_top_tracks_year = spotify_service.get_user_top_tracks(user_id, TimeRange.LONG_TERM)
+        user_top_tracks_month = await spotify_service.get_user_top_tracks(user_id, TimeRange.SHORT_TERM)
+        user_top_tracks_half_year = await spotify_service.get_user_top_tracks(user_id, TimeRange.MEDIUM_TERM)
+        user_top_tracks_year = await spotify_service.get_user_top_tracks(user_id, TimeRange.LONG_TERM)
         
-        user_top_artists_month = spotify_service.get_user_top_artists(user_id, TimeRange.SHORT_TERM)
-        user_top_artists_half_year = spotify_service.get_user_top_artists(user_id, TimeRange.MEDIUM_TERM)
-        user_top_artists_year = spotify_service.get_user_top_artists(user_id, TimeRange.LONG_TERM)
+        user_top_artists_month = await spotify_service.get_user_top_artists(user_id, TimeRange.SHORT_TERM)
+        user_top_artists_half_year = await spotify_service.get_user_top_artists(user_id, TimeRange.MEDIUM_TERM)
+        user_top_artists_year = await spotify_service.get_user_top_artists(user_id, TimeRange.LONG_TERM)
         
-        user_profile = spotify_service.get_user_profile(user_id)
+        user_profile = await spotify_service.get_user_profile(user_id)
 
         top_tracks_month_message_text = await get_user_top_tracks_message(user_profile, user_top_tracks_month, get_text(user.language_code, 'word_month'), user.language_code)
         top_tracks_half_year_message_text = await get_user_top_tracks_message(user_profile, user_top_tracks_half_year, get_text(user.language_code, 'word_half_year'), user.language_code)
