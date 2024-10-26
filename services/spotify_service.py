@@ -179,8 +179,15 @@ class SpotifyService():
     async def refresh_user_access_token(self, user: IUser) -> IUser:
         try:    
             spotify_auth = SpotifyAuth()
-            user.access_token = spotify_auth.refresh_access_token(cast(str, user.refresh_token))
+            access_token, refresh_token = spotify_auth.refresh_access_token(cast(str, user.refresh_token))
+            
+            user.access_token = access_token
             UserTokenManager.set_access_token(user.id, user.access_token)
+        
+            if refresh_token:
+                user.refresh_token = refresh_token
+                UserTokenManager.set_refresh_token(user.id, user.refresh_token)
+           
             return user
         except Exception as e:
             raise Exception(f"Failed to refresh access token: {e}")

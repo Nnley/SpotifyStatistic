@@ -1,6 +1,8 @@
 import os
 import urllib.parse
 import requests
+import json
+import base64
 
 from config import load_environment_variables
 load_environment_variables()
@@ -50,21 +52,28 @@ class SpotifyAuth:
         else:
             raise Exception('Get tokens error: ' + response.json() + '\nRespose status code:' + response.status_code)
 
-    def refresh_access_token(self, refresh_token: str) -> str:
+    def refresh_access_token(self, refresh_token: str) -> str | tuple[str, str]:
+        client_creds = f"{self.client_id}:{self.client_secret}"
+        encoded_creds = base64.b64encode(client_creds.encode()).decode()
+
         payload = {
             "grant_type": "refresh_token",
-            "refresh_token": refresh_token,
-            'client_id': self.client_id,
-            'client_secret': self.client_secret
+            "refresh_token": refresh_token
         }
 
-        response = requests.post(self.token_url, data=payload)
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': f'Basic {encoded_creds}'
+        }
+
+        response = requests.post(self.token_url, headers=headers, data=payload)
 
         if response.status_code == 200:
             token_info = response.json()
+            new_refresh_token = token_info.get("refresh_token", refresh_token)
             new_access_token = token_info.get("access_token")
-            
-            return new_access_token
+
+            return new_access_token, new_refresh_token
         else:
-            raise Exception('Refresh token error: ' + response.json() + '\nRespose status code:' + response.status_code)
-    
+            error_message = json.dumps(response.json())
+            raise Exception('Refresh token error: ' + error_message + '\nResponse status code: ' + str(response.status_code))
