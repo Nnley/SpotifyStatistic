@@ -6,6 +6,7 @@ from handlers.user.auth import register_auth
 from handlers.user.help import register_help
 from handlers.user.change_language import register_change_language
 from handlers.user.stats import register_stats
+from handlers.user.github import register_github
 from handlers.inline_handler import register_inline
 
 from keyboards.default_commands import set_default_commands, remove_default_commands
@@ -17,6 +18,7 @@ def register_all_handlers(dp):
     register_change_language(dp)
     register_inline(dp)
     register_stats(dp)
+    register_github(dp)
 
 async def main():
     register_all_handlers(dp)
