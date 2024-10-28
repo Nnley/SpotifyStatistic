@@ -1,18 +1,20 @@
 localization: dict[str, dict[str, str]] = {
     'ru': {
-        'none_auth_start': 'Привет! Я способен отображать ваше статистику Spotify!\nЧтобы получить статистику, Вам необходимо авторизоваться через Spotify. Для этого введите команду /auth.\n\nIf you want to change the language, enter the command /change_language',
+        'none_auth_start': 'Привет! Я способен отображать вашу статистику Spotify!\nЧтобы получить статистику, Вам необходимо авторизоваться через Spotify. Для этого введите команду /auth.\n\nIf you want to change the language, enter the command /change_language',
         'none_auth_get_stats': 'Чтобы получить статистику, Вам необходимо авторизоваться в боте через Spotify',
         'none_auth_inline_query_title': 'Моя статистика Spotify',
-        'auth_start': 'Привет! Я способен отображать ваше статистику Spotify!\nДоступные команды: /stats, /change_language',
+        'auth_start': 'Привет! Я способен отображать вашу статистику Spotify!\nДоступные команды: /stats, /change_language, /help, /github',
         'auth_button_text': 'Авторизоваться',
         'auth_button_description': 'Для авторизации нажмите на кнопку ниже:',
         'auth_success': 'Вы успешно прошли авторизацию',
         'already_authorized': 'Вы уже авторизованы',
         
+        'github': 'Этот бот является некоммерческим проектом. Исходным кодом бота вы можете посмотреть здесь: https://github.com/Nnley/SpotifyStatistics-TGBot',
+        
         'change_language_button_text': 'Русский | Russian',
         'change_language_buttons_description': 'Выберите язык:',
         
-        'help': 'Этот бот способен отправлять вашу статистику Spotify!\nВ любом чате напишите <code>@SpotifyStatisticBot</code> и нажмите пробел, высветится контекстное меню с выбором действий!\nВсе доступные команды: /stats, /auth, /change_language',
+        'help': 'Этот бот способен отправлять вашу статистику Spotify!\nВ любом чате напишите <code>@SpotifyStatisticBot</code> и нажмите пробел, высветится контекстное меню с выбором действий!\nВсе доступные команды: /stats, /auth, /change_language, /github',
         'stats': 'Напишите <code>@SpotifyStatisticBot</code> в поле ввода сообщения и нажмите пробел, чтобы вызвать контекстное меню с выбором действий',
         
         'tracks_inline_query_title': 'Статистика по трекам',
@@ -34,16 +36,18 @@ localization: dict[str, dict[str, str]] = {
         'none_auth_start': 'Hello! I can display your Spotify statistics!\nTo get the statistics, you need to authorize Spotify. To do this, enter the command /auth.\n\nЕсли хотите сменить язык, введите команду /change_language',
         'none_auth_get_stats': 'To get the statistics, you need to authorize the bot with Spotify',
         'none_auth_inline_query_title': 'My Spotify statistics',
-        'auth_start': 'Hello! I can display your Spotify statistics!\nAvailable commands: /stats, /change_language',
+        'auth_start': 'Hello! I can display your Spotify statistics!\nAvailable commands: /stats, /change_language, /help, /github',
         'auth_button_text': 'Authorize',
         'auth_button_description': 'To authorize, press the button below:',
         'auth_success': 'You have successfully authorized',
         'already_authorized': 'You are already authorized',
         
+        'github': 'This bot is a non-commercial project. You can see the source code of the bot here: https://github.com/Nnley/SpotifyStatistics-TGBot',
+        
         'change_language_button_text': 'English',
         'change_language_buttons_description': 'Choose a language:',
         
-        'help': 'This bot can send your Spotify statistics!\nIn any chat, write <code>@SpotifyStatisticBot</code> and press space, you will see a context menu with options!\nAll available commands: /stats, /auth, /change_language',
+        'help': 'This bot can send your Spotify statistics!\nIn any chat, write <code>@SpotifyStatisticBot</code> and press space, you will see a context menu with options!\nAll available commands: /stats, /auth, /change_language, /github',
         'stats': 'Write <code>@SpotifyStatisticBot</code> in the message input field and press space to call the context menu with options',
       
         'tracks_inline_query_title': 'Statistics by top tracks',
@@ -65,16 +69,18 @@ localization: dict[str, dict[str, str]] = {
         'none_auth_start': 'Sveiki! Es varu parādīt jūsu Spotify statistiku!\nLai iegūtu statistiku, ir nepieciešams autorizēt Spotify. Lai to izdarītu, ievadiet komandu /auth.\n\nIf you want to change the language, enter the command /change_language',
         'none_auth_get_stats': 'Lai iegūtu statistiku, ir nepieciešams autorizēt robotu pakalpojumā Spotify',
         'none_auth_inline_query_title': 'Mana Spotify statistika',
-        'auth_start': 'Sveiki! Es varu parādīt jūsu Spotify statistiku!\nPieejamās komandas: /stats, /change_language',
+        'auth_start': 'Sveiki! Es varu parādīt jūsu Spotify statistiku!\nPieejamās komandas: /stats, /change_language, /help, /github',
         'auth_button_text': 'Pierakstīties',
         'auth_button_description': 'Noklikšķiniet uz pogas zemāk, lai autorizētu:',
         'auth_success': 'Jūs esat veiksmīgi autorizēts',
         'already_authorized': 'Jūs jau esat pieteicies',
         
+        'github': 'Šis robots ir nekomerciāls projekts. Bota pirmkodu varat apskatīt šeit: https://github.com/Nnley/SpotifyStatistics-TGBot',
+        
         'change_language_button_text': 'Latviešu | Latvian',
         'change_language_buttons_description': 'Choose a language:',
         
-        'help': 'Šis robots var nosūtīt jūsu Spotify statistiku!\nJebkurā tērzēšanas režīmā ierakstiet <code>@SpotifyStatisticBot</code> un nospiediet atstarpes taustiņu, parādīsies konteksta izvēlne ar dažādām darbībām!\nVisas pieejamās komandas: /stats, /auth, /change_language.',
+        'help': 'Šis robots var nosūtīt jūsu Spotify statistiku!\nJebkurā tērzēšanas režīmā ierakstiet <code>@SpotifyStatisticBot</code> un nospiediet atstarpes taustiņu, parādīsies konteksta izvēlne ar dažādām darbībām!\nVisas pieejamās komandas: /stats, /auth, /change_language, /github',
         'stats': 'Ierakstiet <code>@SpotifyStatisticBot</code> ziņojuma ievades lodziņā un nospiediet atstarpes taustiņu, lai atvērtu kontekstuālo izvēlni ar darbību izvēli.',
      
         'tracks_inline_query_title': 'Statistika pēc populārākajām dziesmām',
