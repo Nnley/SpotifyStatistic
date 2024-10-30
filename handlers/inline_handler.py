@@ -26,7 +26,7 @@ async def get_user_top_tracks_message(user_profile: IUserProfile, user_top_track
             time_period=time_period
         )
         
-        message_text += '\n\n' + '\n'.join([f"{i + 1}. {track.get('name')} - {track.get('artist')}" for i, track in enumerate(user_top_tracks)])
+        message_text += '\n\n' + '\n'.join([f"{i + 1}. <a href='{track.get('song_link')}'>{track.get('name')} - {track.get('artist')}</a>" for i, track in enumerate(user_top_tracks)])
     return message_text
 
 async def get_user_top_artists_message(user_profile: IUserProfile, user_top_artists: Optional[List[TopArtistsType]], time_period: str, language_code: str) -> str:
@@ -38,7 +38,7 @@ async def get_user_top_artists_message(user_profile: IUserProfile, user_top_arti
             time_period=time_period
         )
         
-        message_text += '\n\n' + '\n'.join([f"{i + 1}. {track.get('name')}" for i, track in enumerate(user_top_artists)])
+        message_text += '\n\n' + '\n'.join([f"{i + 1}. <a href='{track.get('artist_link')}'>{track.get('name')}</a>" for i, track in enumerate(user_top_artists)])
     return message_text
 
 async def inline_handler(query: types.InlineQuery):
