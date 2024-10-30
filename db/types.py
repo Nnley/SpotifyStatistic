@@ -6,11 +6,13 @@ from datetime import datetime
 class TopTracksType(TypedDict):
     song_name: str
     artist: str
+    song_link: str
     updated_at: str
 
     
 class TopArtistsType(TypedDict):
     artist: str
+    artist_link: str
     updated_at: str
     
     
