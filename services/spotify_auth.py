@@ -33,15 +33,21 @@ class SpotifyAuth:
         return f"{self.auth_url}?{urllib.parse.urlencode(params)}"
 
     def get_access_refresh_tokens(self, code: str) -> tuple[str, str]:
+        client_creds = f"{self.client_id}:{self.client_secret}"
+        encoded_creds = base64.b64encode(client_creds.encode()).decode()
+
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': f'Basic {encoded_creds}'
+        }
+
         payload = {
             'grant_type': 'authorization_code',
             'code': code,
-            'client_id': self.client_id,
-            'redirect_uri': self.redirect_uri,
-            'client_secret': self.client_secret
+            'redirect_uri': self.redirect_uri
         }
 
-        response = requests.post(self.token_url, data=payload)
+        response = requests.post(self.token_url, headers=headers, data=payload)
 
         if response.status_code == 200:
             token_info = response.json()
@@ -50,7 +56,9 @@ class SpotifyAuth:
 
             return access_token, refresh_token
         else:
-            raise Exception('Get tokens error: ' + response.json() + '\nRespose status code:' + response.status_code)
+            error_info = response.json()
+            raise Exception(f"Get tokens error: {error_info.get('error', 'Unknown error')}\nResponse status code: {response.status_code}")
+
 
     def refresh_access_token(self, refresh_token: str) -> str | tuple[str, str]:
         client_creds = f"{self.client_id}:{self.client_secret}"
