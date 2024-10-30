@@ -195,11 +195,11 @@ class SpotifyService():
     def _parse_top_tracks(self, data) -> List[TopTracksType]:
         result = []
         for track in data.get('items', []):
-            result.append({'name': track.get('name'), 'artist': track.get('artists')[0].get('name')})
+            result.append({'name': track.get('name'), 'artist': track.get('artists')[0].get('name'), 'song_link': track.get('external_urls').get('spotify')})
         return result
     
     def _parse_top_artists(self, data) -> List[TopArtistsType]:
         result = []
         for track in data.get('items', []):
-            result.append({'name': track.get('name')})
+            result.append({'name': track.get('name'), 'artist_link': track.get('external_urls').get('spotify')})
         return result
