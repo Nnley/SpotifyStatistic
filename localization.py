@@ -17,6 +17,9 @@ localization: dict[str, dict[str, str]] = {
         'help': 'Этот бот способен отправлять вашу статистику Spotify!\nВ любом чате напишите <code>@SpotifyStatisticBot</code> и нажмите пробел, высветится контекстное меню с выбором действий!\nВсе доступные команды: /stats, /auth, /change_language, /github',
         'stats': 'Напишите <code>@SpotifyStatisticBot</code> в поле ввода сообщения и нажмите пробел, чтобы вызвать контекстное меню с выбором действий',
         
+        'currently_playing_inline_query_title': 'Сейчас играет',
+        'currently_playing_inline_query_message': '{display_name} ({country}) сейчас слушает:\nТрек: <a href="{song_link}">{song}</a>\nАртист: <b>{artist}</b>\nАльбом: <b>{album}</b>',
+        
         'tracks_inline_query_title': 'Статистика по трекам',
         'tracks_inline_query_description': 'Посмотреть топ моих самых прослушиваемых треков за {time_period}',
         'tracks_inline_query_message': 'Самые прослушиваемые треки {display_name} ({country}) в Spotify за {time_period}:',
@@ -50,6 +53,9 @@ localization: dict[str, dict[str, str]] = {
         'help': 'This bot can send your Spotify statistics!\nIn any chat, write <code>@SpotifyStatisticBot</code> and press space, you will see a context menu with options!\nAll available commands: /stats, /auth, /change_language, /github',
         'stats': 'Write <code>@SpotifyStatisticBot</code> in the message input field and press space to call the context menu with options',
       
+        'currently_playing_inline_query_title': 'Currently playing',
+        'currently_playing_inline_query_message': '{display_name} ({country}) is currently listening to:\nSong: <a href="{song_link}">{song}</a>\nArtist: <b>{artist}</b>\nAlbum: <b>{album}</b>',
+      
         'tracks_inline_query_title': 'Statistics by top tracks',
         'tracks_inline_query_description': 'See my top Spotify tracks for {time_period}',
         'tracks_inline_query_message': 'Top Spotify tracks {display_name} ({country}) for {time_period}:',
@@ -82,6 +88,9 @@ localization: dict[str, dict[str, str]] = {
         
         'help': 'Šis robots var nosūtīt jūsu Spotify statistiku!\nJebkurā tērzēšanas režīmā ierakstiet <code>@SpotifyStatisticBot</code> un nospiediet atstarpes taustiņu, parādīsies konteksta izvēlne ar dažādām darbībām!\nVisas pieejamās komandas: /stats, /auth, /change_language, /github',
         'stats': 'Ierakstiet <code>@SpotifyStatisticBot</code> ziņojuma ievades lodziņā un nospiediet atstarpes taustiņu, lai atvērtu kontekstuālo izvēlni ar darbību izvēli.',
+     
+        'currently_playing_inline_query_title': 'Šobrīd tiek atskaņota dziesma',
+        'currently_playing_inline_query_message': '{display_name} ({country}) pašlaik klausās:\nSong: <a href="{song_link}">{song}</a>\nArtist: <b>{artist}</b>\nAlbum: <b>{album}</b>',
      
         'tracks_inline_query_title': 'Statistika pēc populārākajām dziesmām',
         'tracks_inline_query_description': 'Skatiet manas {time_period} Spotify populārākās dziesmas',
