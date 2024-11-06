@@ -237,3 +237,11 @@ class AuthorizationCodeManager:
         UserRepository.update_user(user)
         
         return user
+    
+    @staticmethod
+    def delete_authorization_code(user_id: int) -> None:
+        with Session() as session:
+            authorization_code = AuthorizationCodeManager.get_authorization_code(user_id)
+            if authorization_code:
+                session.delete(authorization_code)
+                session.commit()
