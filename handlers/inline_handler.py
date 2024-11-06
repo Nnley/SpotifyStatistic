@@ -2,18 +2,21 @@ from services.spotify_service import SpotifyService, TimeRange
 from aiogram import types
 from db.crud import UserManager
 from db.types import TopTracksType, TopArtistsType, IUserProfile
+from services.types import Track
 from aiogram import Dispatcher
 from localization import get_text
 from typing import List, Optional
 
-async def create_inline_result(id: str, title: str, description: str, message_text: str, reply_markup=None) -> types.InlineQueryResultArticle:
+async def create_inline_result(id: str, title: str, description: str, message_text: str, reply_markup=None, thumb_url: Optional[str] = None) -> types.InlineQueryResultArticle:
     return types.InlineQueryResultArticle(
         id=id,
         title=title,
         description=description,
         input_message_content=types.InputTextMessageContent(
             message_text=message_text
+
         ),
+        thumb_url=thumb_url,
         reply_markup=reply_markup
     )
 
@@ -41,6 +44,22 @@ async def get_user_top_artists_message(user_profile: IUserProfile, user_top_arti
         message_text += '\n\n' + '\n'.join([f"{i + 1}. <a href='{track.get('artist_link')}'>{track.get('name')}</a>" for i, track in enumerate(user_top_artists)])
     return message_text
 
+async def get_user_currently_playing_message(user_profile: IUserProfile, currently_playing: Track, language_code: str) -> str:
+    if currently_playing is not None:
+        message_template = get_text(language_code, 'currently_playing_inline_query_message')
+        message_text = message_template.format(
+            display_name=user_profile.get('display_name'),
+            country=user_profile.get('country'),
+            song_link=currently_playing.get('external_urls').get('spotify'),
+            song=currently_playing.get('name'),
+            artist=currently_playing.get('artists', [{}])[0].get('name'),
+            album=currently_playing.get('album').get('name')
+        )
+        
+        image_url = currently_playing.get('album').get('images', [])[0].get('url')
+        message_text += f"\n\n<a href='{image_url}'></a>"
+    return message_text
+
 async def inline_handler(query: types.InlineQuery):
     user_id = query.from_user.id
     user = UserManager.get_or_create_user(user_id)
@@ -65,6 +84,8 @@ async def inline_handler(query: types.InlineQuery):
     else:
         spotify_service = SpotifyService()
         
+        currently_playing = await spotify_service.get_user_currently_playing(user_id)
+        
         user_top_tracks_month = await spotify_service.get_user_top_tracks(user_id, TimeRange.SHORT_TERM)
         user_top_tracks_half_year = await spotify_service.get_user_top_tracks(user_id, TimeRange.MEDIUM_TERM)
         user_top_tracks_year = await spotify_service.get_user_top_tracks(user_id, TimeRange.LONG_TERM)
@@ -74,6 +95,8 @@ async def inline_handler(query: types.InlineQuery):
         user_top_artists_year = await spotify_service.get_user_top_artists(user_id, TimeRange.LONG_TERM)
         
         user_profile = await spotify_service.get_user_profile(user_id)
+        
+        currently_playing_message_text = await get_user_currently_playing_message(user_profile, currently_playing, user.language_code)
 
         top_tracks_month_message_text = await get_user_top_tracks_message(user_profile, user_top_tracks_month, get_text(user.language_code, 'word_month'), user.language_code)
         top_tracks_half_year_message_text = await get_user_top_tracks_message(user_profile, user_top_tracks_half_year, get_text(user.language_code, 'word_half_year'), user.language_code)
@@ -86,9 +109,21 @@ async def inline_handler(query: types.InlineQuery):
         tracks_description_template = get_text(user.language_code, 'tracks_inline_query_description')
         artists_description_template = get_text(user.language_code, 'artists_inline_query_description')
 
+        if currently_playing is not None:
+            image_url = currently_playing.get('album').get('images', [{}])[0].get('url')
+            results.append(
+                await create_inline_result(
+                    id='2',
+                    title=get_text(user.language_code, 'currently_playing_inline_query_title'),
+                    description=get_text(user.language_code, 'currently_playing_inline_query_description'),
+                    message_text=currently_playing_message_text,
+                    thumb_url=image_url
+                )
+            )
+
         results.append(
             await create_inline_result(
-                id='2',
+                id='3',
                 title=get_text(user.language_code, 'tracks_inline_query_title'),
                 description=tracks_description_template.format(time_period=get_text(user.language_code, 'word_month')),
                 message_text=top_tracks_month_message_text,
@@ -96,7 +131,7 @@ async def inline_handler(query: types.InlineQuery):
         )
         results.append(
             await create_inline_result(
-                id='3',
+                id='4',
                 title=get_text(user.language_code, 'tracks_inline_query_title'),
                 description=tracks_description_template.format(time_period=get_text(user.language_code, 'word_half_year')),
                 message_text=top_tracks_half_year_message_text,
@@ -104,7 +139,7 @@ async def inline_handler(query: types.InlineQuery):
         )
         results.append(
             await create_inline_result(
-                id='4',
+                id='5',
                 title=get_text(user.language_code, 'tracks_inline_query_title'),
                 description=tracks_description_template.format(time_period=get_text(user.language_code, 'word_year')),
                 message_text=top_tracks_year_message_text,
@@ -113,7 +148,7 @@ async def inline_handler(query: types.InlineQuery):
         
         results.append(
             await create_inline_result(
-                id='5',
+                id='6',
                 title=get_text(user.language_code, 'artists_inline_query_title'),
                 description=artists_description_template.format(time_period=get_text(user.language_code, 'word_month')),
                 message_text=top_artists_month_message_text,
@@ -121,7 +156,7 @@ async def inline_handler(query: types.InlineQuery):
         )
         results.append(
             await create_inline_result(
-                id='6',
+                id='7',
                 title=get_text(user.language_code, 'artists_inline_query_title'),
                 description=artists_description_template.format(time_period=get_text(user.language_code, 'word_half_year')),
                 message_text=top_artists_half_year_message_text,
@@ -129,7 +164,7 @@ async def inline_handler(query: types.InlineQuery):
         )
         results.append(
             await create_inline_result(
-                id='7',
+                id='8',
                 title=get_text(user.language_code, 'artists_inline_query_title'),
                 description=artists_description_template.format(time_period=get_text(user.language_code, 'word_year')),
                 message_text=top_artists_year_message_text,

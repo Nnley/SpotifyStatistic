@@ -3,6 +3,7 @@ import enum
 
 from db.crud import UserManager, UserRepository, UserTokenManager, UserTrackManager
 from db.types import TopTracksType, IUser, IUserProfile, TopArtistsType
+from services.types import Track
 
 from services.spotify_auth import SpotifyAuth, NotAuthorizedError
 from typing import Optional, List, cast
@@ -42,11 +43,36 @@ class SpotifyAPI:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=headers) as response:
                 return response.status, await response.json()
+    
+    async def fetch_currently_playing(self, access_token: str) -> tuple[int, dict]:
+        url = f'{self.base_url}/me/player/queue'
+        headers = {'Authorization': f'Bearer {access_token}'}
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers) as response:
+                return response.status, await response.json()
 
 
 class SpotifyService():
     def __init__(self):
         self.spotify_api = SpotifyAPI()
+        
+    async def get_user_currently_playing(self, user_id: int) -> Track:
+        user = UserManager.get_or_create_user(user_id)
+
+        if user.access_token is None or user.refresh_token is None:
+            raise NotAuthorizedError(f"User {user.id} is not authorized")
+
+        status_code, data = await self.spotify_api.fetch_currently_playing(cast(str, user.access_token))
+        
+        if status_code == 401:
+            user = await self.refresh_user_access_token(user)
+            status_code, data = await self.spotify_api.fetch_currently_playing(cast(str, user.access_token))
+            
+        if status_code != 200:
+            raise Exception(f'Request currently playing error with status code: {status_code}')
+            
+        return data['currently_playing']
 
     async def get_user_top_tracks(self, user_id: int, time_range: TimeRange) -> Optional[List[TopTracksType]]:
         user = UserManager.get_or_create_user(user_id)
