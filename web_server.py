@@ -58,6 +58,8 @@ def handle_auth(code):
     state = str(uuid.uuid4())
     session['state'] = state
     
+    AuthorizationCodeManager.delete_authorization_code(user.id)
+    
     return redirect(spotify_auth.generate_auth_link(state))
 
 if __name__ == '__main__':
