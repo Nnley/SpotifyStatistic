@@ -55,9 +55,6 @@ async def get_user_currently_playing_message(user_profile: IUserProfile, current
             artist=currently_playing.get('artists', [{}])[0].get('name'),
             album=currently_playing.get('album').get('name')
         )
-        
-        image_url = currently_playing.get('album').get('images', [])[0].get('url')
-        message_text += f"\n\n<a href='{image_url}'></a>"
     return message_text
 
 async def inline_handler(query: types.InlineQuery):
@@ -96,8 +93,6 @@ async def inline_handler(query: types.InlineQuery):
         
         user_profile = await spotify_service.get_user_profile(user_id)
         
-        currently_playing_message_text = await get_user_currently_playing_message(user_profile, currently_playing, user.language_code)
-
         top_tracks_month_message_text = await get_user_top_tracks_message(user_profile, user_top_tracks_month, get_text(user.language_code, 'word_month'), user.language_code)
         top_tracks_half_year_message_text = await get_user_top_tracks_message(user_profile, user_top_tracks_half_year, get_text(user.language_code, 'word_half_year'), user.language_code)
         top_tracks_year_message_text = await get_user_top_tracks_message(user_profile, user_top_tracks_year, get_text(user.language_code, 'word_year'), user.language_code)
@@ -111,6 +106,7 @@ async def inline_handler(query: types.InlineQuery):
 
         if currently_playing is not None:
             image_url = currently_playing.get('album').get('images', [{}])[0].get('url')
+            currently_playing_message_text = await get_user_currently_playing_message(user_profile, currently_playing, user.language_code)
             results.append(
                 await create_inline_result(
                     id='2',

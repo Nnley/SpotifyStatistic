@@ -57,7 +57,7 @@ class SpotifyService():
     def __init__(self):
         self.spotify_api = SpotifyAPI()
         
-    async def get_user_currently_playing(self, user_id: int) -> Track:
+    async def get_user_currently_playing(self, user_id: int) -> Optional[Track]:
         user = UserManager.get_or_create_user(user_id)
 
         if user.access_token is None or user.refresh_token is None:
@@ -72,7 +72,7 @@ class SpotifyService():
         if status_code != 200:
             raise Exception(f'Request currently playing error with status code: {status_code}')
             
-        return data['currently_playing']
+        return data['currently_playing'] if data.get('currently_playing') else None
 
     async def get_user_top_tracks(self, user_id: int, time_range: TimeRange) -> Optional[List[TopTracksType]]:
         user = UserManager.get_or_create_user(user_id)
