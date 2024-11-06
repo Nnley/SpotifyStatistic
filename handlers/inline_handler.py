@@ -57,6 +57,12 @@ async def get_user_currently_playing_message(user_profile: IUserProfile, current
         )
     return message_text
 
+async def get_user_currently_playing_description(currently_playing: Track, language_code: str) -> str:
+    return get_text(language_code, 'currently_playing_inline_query_description').format(
+        song=currently_playing.get('name'),
+        artist=currently_playing.get('artists', [{}])[0].get('name')
+        )
+
 async def inline_handler(query: types.InlineQuery):
     user_id = query.from_user.id
     user = UserManager.get_or_create_user(user_id)
@@ -107,11 +113,12 @@ async def inline_handler(query: types.InlineQuery):
         if currently_playing is not None:
             image_url = currently_playing.get('album').get('images', [{}])[0].get('url')
             currently_playing_message_text = await get_user_currently_playing_message(user_profile, currently_playing, user.language_code)
+            currently_playing_description = await get_user_currently_playing_description(currently_playing, user.language_code)
             results.append(
                 await create_inline_result(
                     id='2',
                     title=get_text(user.language_code, 'currently_playing_inline_query_title'),
-                    description=get_text(user.language_code, 'currently_playing_inline_query_description'),
+                    description=currently_playing_description,
                     message_text=currently_playing_message_text,
                     thumb_url=image_url
                 )
