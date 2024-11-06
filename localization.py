@@ -18,6 +18,7 @@ localization: dict[str, dict[str, str]] = {
         'stats': 'Напишите <code>@SpotifyStatisticBot</code> в поле ввода сообщения и нажмите пробел, чтобы вызвать контекстное меню с выбором действий',
         
         'currently_playing_inline_query_title': 'Сейчас играет',
+        'currently_playing_inline_query_description': '{song} - {artist}',
         'currently_playing_inline_query_message': '{display_name} ({country}) сейчас слушает:\nТрек: <a href="{song_link}">{song}</a>\nАртист: <b>{artist}</b>\nАльбом: <b>{album}</b>',
         
         'tracks_inline_query_title': 'Статистика по трекам',
@@ -54,6 +55,7 @@ localization: dict[str, dict[str, str]] = {
         'stats': 'Write <code>@SpotifyStatisticBot</code> in the message input field and press space to call the context menu with options',
       
         'currently_playing_inline_query_title': 'Currently playing',
+        'currently_playing_inline_query_description': '{song} - {artist}',
         'currently_playing_inline_query_message': '{display_name} ({country}) is currently listening to:\nSong: <a href="{song_link}">{song}</a>\nArtist: <b>{artist}</b>\nAlbum: <b>{album}</b>',
       
         'tracks_inline_query_title': 'Statistics by top tracks',
@@ -90,6 +92,7 @@ localization: dict[str, dict[str, str]] = {
         'stats': 'Ierakstiet <code>@SpotifyStatisticBot</code> ziņojuma ievades lodziņā un nospiediet atstarpes taustiņu, lai atvērtu kontekstuālo izvēlni ar darbību izvēli.',
      
         'currently_playing_inline_query_title': 'Šobrīd tiek atskaņota dziesma',
+        'currently_playing_inline_query_description': '{song} - {artist}',
         'currently_playing_inline_query_message': '{display_name} ({country}) pašlaik klausās:\nSong: <a href="{song_link}">{song}</a>\nArtist: <b>{artist}</b>\nAlbum: <b>{album}</b>',
      
         'tracks_inline_query_title': 'Statistika pēc populārākajām dziesmām',
