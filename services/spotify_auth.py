@@ -17,7 +17,7 @@ class SpotifyAuth:
         self.client_id =os.getenv("SPOTIFY_CLIENT_ID")
         self.client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
         self.redirect_uri = os.getenv("REDIRECT_URI")
-        self.scope = 'user-read-private user-top-read'
+        self.scope = 'user-read-private user-top-read user-read-currently-playing user-read-playback-state'
         self.token_url = 'https://accounts.spotify.com/api/token'
         self.auth_url = 'https://accounts.spotify.com/authorize'
 
